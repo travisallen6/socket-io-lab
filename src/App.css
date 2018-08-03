@@ -1,1 +1,110 @@
+.chat-form {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    z-index: 5;
+    background: dodgerblue;
+    height: 80px;
+}
 
+.chat-input {
+    height: 39px;
+    width:50vw;
+    position: fixed;
+    left: 20px;
+    bottom: 17px;
+    font-size: 17px;
+    z-index: 10;
+}
+
+.chat-form > button {
+    z-index: 10;
+    width: 117px;
+    height: 46px;
+    background: silver;
+    color: navy;
+    border: none;
+    font-size: 19px;
+    position: fixed;
+    right: 20px;
+    bottom: 16px;
+}
+
+.chat-msg {
+    width: 250px;
+    padding: 15px;
+    border-radius: 7px;
+    margin: 10px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+}
+
+.user {
+    background-color: #00f7ff;
+    float: left;
+    margin-right:100%;
+}
+
+.other {
+    background-color: #00ffb3;
+    float: right;
+    margin-left:100%;
+}
+
+.chat-msg > p {
+    margin: 5px 0;
+}
+
+.chat-msg-from {
+    color: #9b9a9a;
+}
+
+.chat-msg-container {
+    width: 100vw;
+    height: 87vh;
+    overflow-y: scroll;
+    z-index: 1;
+    position: fixed;
+}
+
+.modal-shadow {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    background-color: #010101;
+    z-index: 3;
+    opacity: 0.8;
+    display:flex;
+    justify-content: center;
+    align-items:center;
+}
+
+.modal-card {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    width: 400px;
+    height: 190px;
+    background-color: #FEFEFE;
+    padding: 0px 40px 33px;
+    border-radius: 4px;
+}
+
+.modal-input {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+}
+
+.modal-button {
+    width: 147px;
+    height: 46px;
+    background: silver;
+    color: navy;
+    border: none;
+    font-size: 19px;
+    margin: 0 auto;
+}
+
+.modal-form {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+}

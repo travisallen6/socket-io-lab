@@ -1,28 +1,35 @@
 require('dotenv').config();
 
-const   express = require('express')
-        , bodyParser = require('body-parser')
-        , massive = require('massive')
-        , faker = require('faker')
-        , session = require('express-session');
+const express = require('express'),
+  bodyParser = require('body-parser'),
+  massive = require('massive'),
+  faker = require('faker'),
+  session = require('express-session'),
+  socketIo = require('socket.io');
 
-const { CONNECTION_STRING, PORT, SESSION_SECRET } = process.env; 
+let messages = [];
+
+const { CONNECTION_STRING, PORT, SESSION_SECRET } = process.env;
 
 const app = express();
 
+app.use(express.static(__dirname + '/../build'))
+
 app.use(bodyParser.json());
 
-app.use(session({
-    secret: SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true
-}));
+// Wrap socket in the app.listen
+const io = socketIo(
+  app.listen(PORT || 3010, () => console.log(`Hard to port ${PORT || 3010}`))
+);
 
-massive(CONNECTION_STRING)
-    .then( db => {
-        app.set('db', db)
-        console.log('DB Connected')
+io.on('connection', socket => {
+  console.log('client: ' + socket.id)
+  socket.on('message', ({body, from}) => {
+    socket.broadcast.emit('message', {
+      body,
+      from
     })
-    .catch( err => console.log(err));
+  })
+});
 
-app.listen( PORT || 3010, () => console.log(`Hard to port ${PORT || 3010}`));
+
