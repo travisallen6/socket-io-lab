@@ -32,6 +32,8 @@ io.on('connection', socket => {
   users.push({
     id: socket.id,
   })
+
+  // Emit to all connected sockets.
   io.emit('users', users)
 
   socket.on('username', (username) => {
@@ -49,6 +51,10 @@ io.on('connection', socket => {
       body,
       from
     })
+  })
+
+  socket.on('join', room => {
+    socket.join(room)
   })
 
   socket.on('disconnect', () => {

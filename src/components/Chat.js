@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import io from 'socket.io-client'
-import SetUsername from './SetUsername'
-import UserList from './UserList'
+import io from 'socket.io-client';
+import SetUsername from './SetUsername';
+import UserList from './UserList';
+import MessageBox from './MessageBox';
+import Tabs from './Tabs';
 
 class Chat extends Component {
   constructor(props) {
@@ -11,16 +13,21 @@ class Chat extends Component {
         userInput: '',
         userName: '',
         socketId: '',
+        tabSecret: false,
         messages: [],
+        secretMessages: [],
+        secretUsers: [],
         users: []
     };
   }
 
   componentDidMount(){
      this.socket = io('http://localhost:3010'); // Remove when not running two servers
+
      this.socket.on('message', (message) => {
          this.setState({messages: [message, ...this.state.messages]})
      })
+
      this.socket.on('users', users => {
          users = users.map( user => {
              user.selected = false;
@@ -30,6 +37,7 @@ class Chat extends Component {
              users: users
          })
      })
+
      this.socket.on('id', socketId => {
          console.log('id: ' + socketId)
          this.setState({ socketId })
@@ -84,16 +92,16 @@ class Chat extends Component {
       this.setState({users: newUsers})
   }
 
+  updateRoom = (bool) => {
+    this.setState({tabSecret: bool})
+  }
+
+  joinRoom = () => {
+    this.socket.emit('join', 'secret')
+  }
+
   render() {
-      const displayMessages = this.state.messages.map( (msg, i) => {
-          const msgClass = msg.from === 'me' ? 'user' : 'other';
-            return (
-                <div key={i} class={'chat-msg ' + msgClass}>
-                    <p>{msg.body}</p>
-                    <p className='chat-msg-from'>{msg.from}</p>
-                </div>
-            )
-        })
+      
 
     return (
         <div>
@@ -105,18 +113,45 @@ class Chat extends Component {
                 setUser={this.setUser}
             /> 
             }
+            
             <div className="chat-upper">
-                <UserList 
+                <div className="chat-sidebar">
+                    <Tabs 
+                        tabSecret={this.state.tabSecret}
+                        updateRoom={this.updateRoom}
+                    />
+                    {this.state.tabSecret
+                    ? <UserList 
                     user={this.state.userName}
                     users={this.state.users}
                     socketId={this.state.socketId}
                     selectItem={this.toggleSelected}
-                />
-                <div className='chat-msg-container'>
-                    {displayMessages}
+                    />
+                    : <UserList 
+                    user={this.state.userName}
+                    users={this.state.users}
+                    socketId={this.state.socketId}
+                    selectItem={this.toggleSelected}
+                    />
+                    }
                 </div>
+                {
+                this.state.tabSecret  
+                ? <MessageBox 
+                    messages={this.state.secretMessages}
+                />
+                : <MessageBox 
+                    messages={this.state.messages}
+                />
+                }
                 <form className='chat-form' onSubmit={this.handleSubmit}>
-                    <input className='chat-input' type='text' value={this.state.messageInput} name='messageInput' onChange={this.handleInput} />
+                    <input 
+                        className='chat-input' 
+                        type='text' 
+                        value={this.state.messageInput} 
+                        name='messageInput' 
+                        onChange={this.handleInput} 
+                    />
                     <button type='submit'>Send</button>
                 </form>
             </div>

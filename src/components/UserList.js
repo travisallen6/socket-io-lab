@@ -1,8 +1,10 @@
 import React from 'react';
 
 const UserList = (props) => {
+    
     return ( 
         <div className="userlist-container">
+            
             <h2>Users</h2>
             <h4>{props.user}</h4>
             {
