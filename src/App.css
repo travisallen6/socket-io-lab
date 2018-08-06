@@ -59,11 +59,9 @@
 }
 
 .chat-msg-container {
-    width: 100vw;
     height: 87vh;
     overflow-y: scroll;
     z-index: 1;
-    position: fixed;
 }
 
 .modal-shadow {
@@ -71,7 +69,7 @@
     height: 100vh;
     width: 100vw;
     background-color: #010101;
-    z-index: 3;
+    z-index: 12;
     opacity: 0.8;
     display:flex;
     justify-content: center;
@@ -85,6 +83,17 @@
     background-color: #FEFEFE;
     padding: 0px 40px 33px;
     border-radius: 4px;
+    opacity: 1;
+}
+
+.modal-position {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    z-index: 13;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .modal-input {
@@ -107,4 +116,24 @@
     display:flex;
     flex-direction: column;
     align-items: center;
+}
+
+.userlist-container {
+    background: #848484;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    color: white;
+}
+
+.userlist-container > h2 {
+    color: white;
+    padding-bottom: 18px;
+    border-bottom: 1px solid white;
+}
+
+.chat-upper {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    height: 89.2vh;
 }
