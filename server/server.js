@@ -53,10 +53,6 @@ io.on('connection', socket => {
     })
   })
 
-  socket.on('join', room => {
-    socket.join(room)
-  })
-
   socket.on('disconnect', () => {
     console.log('disconnected: ' + socket.id)
     users = users.filter( user => {

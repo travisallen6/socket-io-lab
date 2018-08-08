@@ -4,158 +4,133 @@ import SetUsername from './SetUsername';
 import UserList from './UserList';
 import MessageBox from './MessageBox';
 import Tabs from './Tabs';
+import Composer from './Composer';
+
 
 class Chat extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        messageInput: '',
         userInput: '',
         userName: '',
         socketId: '',
-        tabSecret: false,
         messages: [],
-        secretMessages: [],
-        secretUsers: [],
-        users: []
+        users: [],
     };
   }
 
   componentDidMount(){
-     this.socket = io('http://localhost:3010'); // Remove when not running two servers
+        this.socket = io('http://localhost:3010'); // Remove when not running two servers
 
-     this.socket.on('message', (message) => {
-         this.setState({messages: [message, ...this.state.messages]})
-     })
+        this.socket.on('message', (message) => {
+            this.setState({messages: [message, ...this.state.messages]})
+        })
 
-     this.socket.on('users', users => {
-         users = users.map( user => {
-             user.selected = false;
-             return user;
-         })
-         this.setState({
-             users: users
-         })
-     })
+        this.socket.on('users', users => {
+            users = users.map( user => {
+                user.selected = false;
+                return user;
+            })
+            this.setState({
+                users: users
+            })
+        })
 
-     this.socket.on('id', socketId => {
-         console.log('id: ' + socketId)
-         this.setState({ socketId })
-     })
-  }
-
-  handleInput = ({target:{value, name}}) => {
-    this.setState({
-        [name]: value
-    })
-  }
-
-  userSubmit = (e) => {
-      e.preventDefault();
-      this.setState({
-          userName: this.state.userInput
-      })
-  }
-
-  handleSubmit = (e) => {
-    e.preventDefault();
-    const {messages, messageInput: text, userName} = this.state
-    if(text){
-        const newMessage = {
-            body: text,
-            from: 'me'
-        }
-        this.socket.emit('message', {body: text, from: userName})
-        this.setState({
-            messages: [newMessage, ...messages],
-            messageInput: ''
+        this.socket.on('id', socketId => {
+            console.log('id: ' + socketId)
+            this.setState({ socketId })
         })
     }
-  }
 
-  setUser = (e) => {
-      e.preventDefault();
-      const {userInput} = this.state
-      this.setState({
-          userInput: '',
-          userName: userInput
-      })
+    componentWillUnmount(){
+        this.socket.disconnect();
+    }
 
-      this.socket.emit('username', userInput) 
-  }
+    handleInput = ({target:{value, name}}) => {
+        this.setState({
+            [name]: value
+        })
+    }
 
-  toggleSelected = (id) => {
-      const newUsers = this.state.users.map( user => {
-          if(user.id === id) user.selected = !user.selected;
-          return user;
-      })
-      this.setState({users: newUsers})
-  }
+    userSubmit = (e) => {
+        e.preventDefault();
+        this.setState({
+            userName: this.state.userInput
+        })
+    }
 
-  updateRoom = (bool) => {
-    this.setState({tabSecret: bool})
-  }
+    handleNewMessage = (sentMessage) => {
+        const {messages} = this.state
+        this.setState({
+            messages: [sentMessage, ...messages],
+        })
+    }
 
-  joinRoom = () => {
-    this.socket.emit('join', 'secret')
-  }
+    setUser = (e) => {
+        e.preventDefault();
+        const {userInput} = this.state
+        this.setState({
+            userInput: '',
+            userName: userInput
+        })
+        this.socket.emit('username', userInput) 
+    }
 
-  render() {
-      
+    // toggleSelected = (id) => {
+    //     const newUsers = this.state.users.map( user => {
+    //         if(user.id === id) user.selected = !user.selected;
+    //         return user;
+    //     })
+    //     this.setState({users: newUsers})
+    // }
 
-    return (
-        <div>
-            { !this.state.userName && 
-            <SetUsername 
-                updateUser={this.handleUserInput}
-                handleInput={this.handleInput}
-                userName={this.state.userInput}
-                setUser={this.setUser}
-            /> 
-            }
-            
-            <div className="chat-upper">
-                <div className="chat-sidebar">
-                    <Tabs 
-                        tabSecret={this.state.tabSecret}
-                        updateRoom={this.updateRoom}
-                    />
-                    {this.state.tabSecret
-                    ? <UserList 
-                    user={this.state.userName}
-                    users={this.state.users}
-                    socketId={this.state.socketId}
-                    selectItem={this.toggleSelected}
-                    />
-                    : <UserList 
-                    user={this.state.userName}
-                    users={this.state.users}
-                    socketId={this.state.socketId}
-                    selectItem={this.toggleSelected}
-                    />
-                    }
-                </div>
-                {
-                this.state.tabSecret  
-                ? <MessageBox 
-                    messages={this.state.secretMessages}
-                />
-                : <MessageBox 
-                    messages={this.state.messages}
-                />
+    // updateRoom = (bool) => {
+    //     this.setState({tabSecret: bool})
+    // }
+
+    // joinRoom = () => {
+    //     const {joinedSecret} = this.state
+    //     if(!joinedSecret){
+    //         this.socket.emit('join', 'secret')
+    //     } else {
+    //         this.socket.emit('leave', 'secret')
+    //     }
+    //     this.setState({
+    //         joinedSecret: !joinedSecret
+    //     })
+    // }
+
+    render() {
+        return (
+            <div>
+                { !this.state.userName && 
+                <SetUsername 
+                    updateUser={this.handleUserInput}
+                    handleInput={this.handleInput}
+                    userName={this.state.userInput}
+                    setUser={this.setUser}
+                /> 
                 }
-                <form className='chat-form' onSubmit={this.handleSubmit}>
-                    <input 
-                        className='chat-input' 
-                        type='text' 
-                        value={this.state.messageInput} 
-                        name='messageInput' 
-                        onChange={this.handleInput} 
+                
+                <div className="chat-upper">
+                    <div className="chat-sidebar">
+                        <UserList 
+                            user={this.state.userName}
+                            users={this.state.users}
+                            socketId={this.state.socketId}
+                            selectItem={this.toggleSelected}
+                        />
+                    </div>
+                    <MessageBox 
+                        messages={this.state.messages}
                     />
-                    <button type='submit'>Send</button>
-                </form>
+                    <Composer 
+                        userName={this.state.userName}
+                        updateMessages={this.handleNewMessage}
+                        socket={this.socket}
+                    />
+                </div>
             </div>
-        </div>
     )
   }
 }
