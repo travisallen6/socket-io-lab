@@ -1,6 +1,5 @@
 NGROK - A way to get a live accessible URL that points to a port on localhost. - https://ngrok.com/
 
-
 Mason's example repo - https://github.com/masongalland/simple-socket-chat - Simple chat app
 Beth's example repo - https://github.com/Be-The-Bert/react-sockets-demo - Rudimentary chat app, with basic, broadcast, and room socket functionality.
 Socket.io Docs - https://socket.io/docs/
